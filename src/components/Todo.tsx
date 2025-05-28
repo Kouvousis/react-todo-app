@@ -6,14 +6,21 @@ import type {TodoProps, Action} from "../types.ts";
 
 const todoReducer = (state: TodoProps[], action: Action): TodoProps[] => {
     switch (action.type) {
-        case "ADD":
-            { const newTodo: TodoProps = {
+        case "ADD": {
+            const newTodo: TodoProps = {
                 id: Date.now(),
                 text: action.payload,
             }
-            return [...state, newTodo] }
+            return [...state, newTodo]
+        }
         case "DELETE":
             return state.filter(todo => todo.id !== action.payload)
+        case "EDIT":
+            return state.map(todo =>
+                todo.id === action.payload.id
+                    ? {...todo, text: action.payload.newText}
+                    : todo
+            )
         default:
             return state;
     }
@@ -27,7 +34,7 @@ const Todo = () => {
         <>
             <div className="max-w-sm mx-auto p-6">
                 <h1 className="text-center text-2xl">To-Do List</h1>
-                <TodoForm dispatch={dispatch} />
+                <TodoForm dispatch={dispatch}/>
                 <TodoList todos={todos} dispatch={dispatch}/>
             </div>
         </>
