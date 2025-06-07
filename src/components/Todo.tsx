@@ -32,6 +32,8 @@ const todoReducer = (state: TodoProps[], action: Action): TodoProps[] => {
                     ? {...todo, completed: !todo.completed}
                     : todo
             )
+        case "CLEAR_ALL":
+            return []
         default:
             return state;
     }
@@ -39,10 +41,17 @@ const todoReducer = (state: TodoProps[], action: Action): TodoProps[] => {
 
 const Todo = () => {
     const [todos, dispatch] = useReducer(todoReducer, [], getInitialTodos)
+    const totalTasks: number = todos.length
+    const completedTasks: number = todos.filter(todos => todos.completed).length
+    const activeTasks: number = totalTasks - completedTasks
 
     useEffect(() => {
         localStorage.setItem("todos", JSON.stringify(todos));
     }, [todos])
+
+    const handleClearAll = () => {
+        dispatch({type: "CLEAR_ALL"})
+    }
 
     return (
         <>
@@ -50,6 +59,24 @@ const Todo = () => {
                 <h1 className="text-center text-2xl">To-Do List</h1>
                 <TodoForm dispatch={dispatch}/>
                 <TodoList todos={todos} dispatch={dispatch}/>
+
+                {todos.length > 0 && (
+                    <>
+                        <div className="flex justify-between text-center border-t pt-2 mt-4 text-cf-gray">
+                            <span>Total: {totalTasks}</span>
+                            <span>Active: {activeTasks}</span>
+                            <span>Completed: {completedTasks}</span>
+                        </div>
+                        <div className="text-end mt-4">
+                            <button
+                                onClick={handleClearAll}
+                                className="bg-cf-dark-red text-white py-2 px-1 rounded"
+                            >
+                                Clear All
+                            </button>
+                        </div>
+                    </>
+                )}
             </div>
         </>
     )
