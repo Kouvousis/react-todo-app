@@ -1,21 +1,25 @@
-import {useState} from "react";
+import {type ChangeEvent, type FormEvent, useState} from "react";
 import type {TodoFormProps} from "../types.ts";
 
 
-const TodoForm = ({dispatch}: TodoFormProps) => {
+const TodoForm = ({dispatch, inputRef}: TodoFormProps) => {
     const [text, setText] = useState("");
+    // const inputRef = useRef<HTMLInputElement>(null);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setText(e.target.value);
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         if (text.trim() !== "") {
             dispatch({type: "ADD", payload: text});
             setText("");
         }
+        inputRef.current?.focus();
     }
+
+
 
     return (
         <>
@@ -25,13 +29,13 @@ const TodoForm = ({dispatch}: TodoFormProps) => {
             >
                 <input
                     type="text"
+                    ref={inputRef}
                     value={text}
                     onChange={handleChange}
                     className="flex-1 border p-2 rounded"
                     placeholder="New task..."
                 />
                 <button
-
                     type="submit"
                     className="bg-cf-dark-gray text-white px-4 py-2 rounded"
                 >
